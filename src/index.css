@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --red:       #ff2a2a;
+  --red-glow:  rgba(255,42,42,0.15);
+  --green:     #00e87a;
+  --amber:     #ff5820;
+  --bg:        #050507;
+  --mono:      'IBM Plex Mono', monospace;
+  --disp:      'Syne', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: #e2e2e2;
+  font-family: var(--mono);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Global scanline ───────────────────────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(0,0,0,0.022) 3px, rgba(0,0,0,0.022) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ── Rare page flicker ─────────────────────────────────────────────────────── */
+@keyframes pgFlicker {
+  0%,95%,100% { opacity:1 }
+  95.4% { opacity:.97 }
+  95.8% { opacity:1 }
+  96.3% { opacity:.94 }
+  96.6% { opacity:1 }
+}
+#root { animation: pgFlicker 24s infinite; }
+
+/* ── Scan sweep ────────────────────────────────────────────────────────────── */
+@keyframes sweepY {
+  0%   { transform:translateY(-4px); opacity:0 }
+  4%   { opacity:1 }
+  96%  { opacity:1 }
+  100% { transform:translateY(100vh); opacity:0 }
+}
+.sweep-line {
+  position: absolute; left:0; right:0; height:1px;
+  background: linear-gradient(90deg,
+    transparent 0%, rgba(255,42,42,0.0) 15%,
+    rgba(255,42,42,0.4) 45%,
+    rgba(255,100,100,0.6) 50%,
+    rgba(255,42,42,0.4) 55%,
+    rgba(255,42,42,0.0) 85%, transparent 100%
+  );
+  animation: sweepY 5.5s linear infinite;
+  pointer-events: none;
+}
+
+/* ── Status blink ──────────────────────────────────────────────────────────── */
+@keyframes blink {
+  0%,49% { opacity:1 }
+  50%,100% { opacity:.2 }
+}
+.blink { animation: blink 1.15s ease-in-out infinite; }
+
+/* ── Corner bracket animation ──────────────────────────────────────────────── */
+@keyframes cornerPulse {
+  0%,100% { opacity:.6 }
+  50% { opacity:1 }
+}
+.corner-pulse { animation: cornerPulse 2s ease-in-out infinite; }
+
+/* ── Pulse ring ────────────────────────────────────────────────────────────── */
+@keyframes pulseExpand {
+  0%   { transform:scale(1);   opacity:.55 }
+  100% { transform:scale(2.2); opacity:0   }
+}
+.pulse-ring {
+  position:absolute; border-radius:50%;
+  border:1px solid rgba(255,42,42,0.4);
+  animation: pulseExpand 2.2s ease-out infinite;
+}
